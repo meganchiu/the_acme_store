@@ -1,6 +1,7 @@
 const { Client } = require('pg');
 
 const { v4: uuidv4 } = require('uuid');
+const bcrypt = require('bcrypt');
 
 const client = new Client(
   process.env.DATABASE_URL || 
@@ -66,17 +67,35 @@ const createUser = async (username, password) => {
     const SQL = `
       INSERT INTO users(id, username, password) VALUES($1, $2, $3) RETURNING *
     `;
-    const response = await client.query(SQL, [id, username, password]);
+    const response = await client.query(SQL, [id, username, await bcrypt.hash(password, 5)]);
     return response.rows[0];
   } catch (error) {
     console.error('Error creating user:', error);
   }
 };
 
+const fetchUsers = async()=> {
+  const SQL = `
+    SELECT * FROM users;
+  `;
+  const response = await client.query(SQL);
+  return response.rows;
+}
+
+const fetchProducts = async()=> {
+  const SQL = `
+    SELECT * FROM products;
+  `;
+  const response = await client.query(SQL);
+  return response.rows;
+}
+
 module.exports = {
   client,
   connectDB,
   createTables,
   createProduct,
-  createUser
+  createUser,
+  fetchUsers,
+  fetchProducts
 };

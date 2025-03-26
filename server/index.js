@@ -1,4 +1,4 @@
-const {client, connectDB, createTables, createProduct, createUser } = require('./db.js');
+const {client, connectDB, createTables, createProduct, createUser, fetchUsers, fetchProducts } = require('./db.js');
 
 const express = require('express');
 const app = express();
@@ -20,8 +20,13 @@ const init = async () => {
     createProduct('Premium Wireless Headphones'),
     createProduct('Vintage Leather Backpack'),
     createProduct('Adjustable Standing Desk'),
-    
   ]);
+  const users = await fetchUsers();
+  console.log(users);
+
+  const products = await fetchProducts();
+  console.log(products);
+  
   app.listen(port, () => console.log(`listening on port ${port}`))
 }
 
