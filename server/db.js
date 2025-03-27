@@ -90,6 +90,29 @@ const fetchProducts = async()=> {
   return response.rows;
 }
 
+const createFavorite = async (userId, productId) => {
+  try {
+    const id = uuidv4();
+    const SQL = `
+      INSERT INTO favorites (id, user_id, product_id)
+      VALUES ($1, $2, $3)
+      RETURNING *;
+    `;
+    const { rows } = await client.query(SQL, [id, userId, productId]);
+    return rows[0];
+  } catch (error) {
+    console.error('Error creating favorite:', error);
+  }
+};
+
+const fetchFavorites = async() => {
+  const SQL = `
+  SELECT * FROM favorites;
+  `;
+  const response = await client.query(SQL);
+  return response.rows;
+};
+
 module.exports = {
   client,
   connectDB,
@@ -97,5 +120,7 @@ module.exports = {
   createProduct,
   createUser,
   fetchUsers,
-  fetchProducts
+  fetchProducts,
+  createFavorite,
+  fetchFavorites
 };
