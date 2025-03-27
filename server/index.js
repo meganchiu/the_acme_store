@@ -1,4 +1,4 @@
-const {client, connectDB, createTables, createProduct, createUser, fetchUsers, fetchProducts, createFavorite, fetchFavorites } = require('./db.js');
+const {client, connectDB, createTables, createProduct, createUser, fetchUsers, fetchProducts, createFavorite, fetchFavorites, destroyFavorite } = require('./db.js');
 
 const express = require('express');
 const app = express();
@@ -27,15 +27,14 @@ const init = async () => {
   const products = await fetchProducts();
   console.log('Products: ', products);
 
-  const favories = await Promise.all([
-    createFavorite(
-      alfred.id,
-      Blender.id
-    )
+  const [favorite1] = await Promise.all([
+    createFavorite(alfred.id, Blender.id)
   ]);
 
   const favorites = await fetchFavorites();
   console.log(`Favorites: `, favorites);
+
+  destroyFavorite(favorite1.id);
 
   app.listen(port, () => console.log(`listening on port ${port}`))
 }

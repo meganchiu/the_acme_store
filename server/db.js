@@ -113,6 +113,22 @@ const fetchFavorites = async() => {
   return response.rows;
 };
 
+const destroyFavorite = async (id) => {
+  try {
+    const SQL = `DELETE FROM favorites WHERE id = $1 RETURNING *;`;
+    const { rows } = await client.query(SQL, [id]);
+    if (rows.length) {
+      console.log(`Favorite with ID ${id} deleted.`);
+      return rows[0];
+    } else {
+      console.log(`No favorite found with ID ${id}.`);
+      return null;
+    }
+  } catch (error) {
+    console.error('Error deleting favorite:', error);
+  }
+};
+
 module.exports = {
   client,
   connectDB,
@@ -122,5 +138,6 @@ module.exports = {
   fetchUsers,
   fetchProducts,
   createFavorite,
-  fetchFavorites
+  fetchFavorites,
+  destroyFavorite
 };
